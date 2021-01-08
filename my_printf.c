@@ -30,31 +30,186 @@ I'll have to make sure the arguments are processed in the correct order
 
 
 
+char* reverse_string(char* param_1)
+{
+    int length = strlen(param_1);
+    for (int i = 0; i < length / 2; i++)
+    {
+        char storage = param_1[i];
+        param_1[i] = param_1[length - i - 1];
+        param_1[length - i - 1] = storage;
+    }
+    return param_1;
+}
+
+char hex_to_char (int num, char base)
+{
+    char return_val;
+    if (num == 15)
+    {
+        if (base == 'X')
+        {
+            return_val = 'F';
+        }
+        else if (base == 'x')
+        {
+            return_val = 'f';
+        }
+        
+    }
+    else if (num == 14)
+    {
+        if (base == 'X')
+        {
+            return_val = 'E';
+        }
+        else if (base == 'x')
+        {
+            return_val = 'e';
+        }
+    }
+    else if (num == 13)
+    {
+        if (base == 'X')
+        {
+            return_val = 'D';
+        }
+        else if (base == 'x')
+        {
+            return_val = 'd';
+        }
+    }
+    else if (num == 12)
+    {
+        if (base == 'X')
+        {
+            return_val = 'C';
+        }
+        else if (base == 'x')
+        {
+            return_val = 'c';
+        }
+    }
+    else if (num == 11)
+    {
+        if (base == 'X')
+        {
+            return_val = 'B';
+        }
+        else if (base == 'x')
+        {
+            return_val = 'b';
+        }
+    }
+    else if (num == 10)
+    {
+        if (base == 'X')
+        {
+            return_val = 'A';
+        }
+        else if (base == 'x')
+        {
+            return_val = 'a';
+        }
+    }
+    else
+    {
+        return_val = num + '0';
+    }
+    return return_val;
+}
+
+char *num_to_str(int num, char base)
+{
+    int mod; //This is used to do operations in the specific base.
+    int neg = 0; //this identifies if a number is negative. 1 means the number is negative, 0 means the number is non-negative.
+    int remainder;
+    char *str;
+    if (base == 'd')
+    {
+        if (num < 0) //this is to catch negative numbers.
+        {
+            num = num * -1;
+            neg = 1;
+        }
+        mod = 10;
+        str = malloc(sizeof(char) * 11); //The greatest value of int is 2,147,483,647. If that value is negative, then we'll need a string that is 11 characters long to hold it.
+        int i = 0;        
+        while (num >= mod)
+        {
+            remainder = num % mod;
+            str[i] = remainder + '0';
+            i++;
+            num = (num - remainder) / mod;
+        }
+        str[i] = num + '0';
+        if (neg == 1) //Adds a '-' to the string for negative numbers
+        {
+            i++;
+            str[i] = '-';
+        }
+        str = reverse_string(str); //Reverses the string to provide a clean output.
+    }
+    else if (base == 'o')
+    {
+        mod = 8;
+        str = malloc(sizeof(char) * 11); //The greatest value of int is 2,147,483,647. If that value is negative, then we'll need a string that is 11 characters long to hold it.
+        int i = 0;        
+        while (num >= mod)
+        {
+            remainder = num % mod;
+            str[i] = remainder + '0';
+            i++;
+            num = (num - remainder) / mod;
+        }
+        str[i] = num + '0';
+        str = reverse_string(str); //Reverses the string to provide a clean output.
+    }
+    else if (base == 'u')
+    {
+        mod = 10;
+        str = malloc(sizeof(char) * 11); //The greatest value of int is 2,147,483,647. If that value is negative, then we'll need a string that is 11 characters long to hold it.
+        int i = 0;        
+        while (num >= mod)
+        {
+            remainder = num % mod;
+            str[i] = remainder + '0';
+            i++;
+            num = (num - remainder) / mod;
+        }
+        str[i] = num + '0';
+        str = reverse_string(str); //Reverses the string to provide a clean output.
+    }
+    else if (base == 'x' || base == 'X')
+    {
+        mod = 16;
+        str = malloc(sizeof(char) * 11); //The greatest value of int is 2,147,483,647. If that value is negative, then we'll need a string that is 11 characters long to hold it.
+        int i = 0;        
+        while (num >= mod)
+        {
+            remainder = num % mod;
+            str[i] = hex_to_char(remainder, base);
+            i++;
+            num = (num - remainder) / mod;
+        }
+        str[i] = hex_to_char(num, base);
+        str = reverse_string(str); //Reverses the string to provide a clean output.
+    }
+    return str;
+}
+
 void insert(char c, va_list args) //This function determines how to add the next item in args to a string
 {
-    if (c == 'd')
+    if (c == 'd' || c == 'o' || c == 'u' || c == 'x' || c == 'X')
     {
-        // char* str = (char*)malloc(sizeof(char) * 11);
-        // itoa(va_arg(args,int), str, 10); //itoa isn't a standard function in stdlib.h, I'll have to develop my own function
-        // int i = 0;
-        // while (str[i] != '\0')
-        // {
-        //     write(1, &str[i], 1);
-        //     i++;
-        // }
-        // free(str);
-    }
-    else if (c == 'o')
-    {
-
-    }
-    else if (c == 'u')
-    {
-        
-    }
-    else if (c == 'x')
-    {
-        
+        int num = va_arg(args, int);
+        char *val = num_to_str(num, c);
+        int i = 0;
+        while (val[i] != '\0')
+        {
+            write(1, &val[i], 1);
+            i++;
+        }
     }
     else if (c == 'c')
     {
@@ -103,8 +258,9 @@ int my_printf(char *format, ...)
 
 int main()
 {
-    char *str = "fuck everything";
-    printf("printf: hello world\n");
-    my_printf("my_printf: hello world %s", str);
+    int num = 0xFA123;
+    // char *str = num_to_str(test, 'd');
+    printf("printf: %x\n", num);
+    my_printf("my_printf: %X\n", num);
     return 0;
 }
