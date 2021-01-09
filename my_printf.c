@@ -228,10 +228,31 @@ void insert(char c, va_list args) //This function determines how to add the next
     }
     else if (c == 'p')
     {
-        
+        //This if statement is very similar to the num_to_str function. I didn't copy that here because num_to_str takes ints, not long ints
+        unsigned long int mod = 16;
+        int remainder;
+        unsigned long int num = va_arg(args, unsigned long int); //in a 64 bit system, a void pointer can have a size of 8 bytes, therefore we use a long int to store the value.
+        char *str = malloc(sizeof(char) * 20); //The greatest value of int is 2,147,483,647. If that value is negative, then we'll need a string that is 11 characters long to hold it.
+        int i = 0;        
+        while (num >= mod)
+        {
+            remainder = num % mod;
+            str[i] = hex_to_char(remainder, 'x');
+            i++;
+            num = (num - remainder) / mod;
+        }
+        str[i] = hex_to_char(num, 'x');
+        str[i + 1] = 'x';
+        str[i + 2] = '0';
+        str = reverse_string(str); //Reverses the string to provide a clean output.
+        i = 0;  //reset i to 0 to write all the characters
+        while (str[i] != '\0')
+        {
+            write(1, &str[i], 1);
+            i++;
+        }
     }
 }
-
 
 int my_printf(char *format, ...)
 {
@@ -259,8 +280,8 @@ int my_printf(char *format, ...)
 int main()
 {
     int num = 0xFA123;
-    // char *str = num_to_str(test, 'd');
-    printf("printf: %x\n", num);
-    my_printf("my_printf: %X\n", num);
+    void *p = &num;
+    printf("printf: %p\n", p);
+    my_printf("my_printf: %p\n", p);
     return 0;
 }
