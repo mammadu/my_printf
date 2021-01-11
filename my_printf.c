@@ -6,15 +6,17 @@
 
 
 
-void reverse_string(char* param_1)
+char* reverse_string(char* param_1)
 {
+    char* return_val = strdup(param_1);
     int length = strlen(param_1); 
     for (int i = 0; i < (length / 2); i++)
     {
         char storage = param_1[i];
-        param_1[i] = param_1[length - i - 1];
-        param_1[length - i - 1] = storage;
+        return_val[i] = param_1[length - i - 1];
+        return_val[length - i - 1] = storage;
     }
+    return return_val;
 }
 
 char hex_to_char (int num, char base)
@@ -164,7 +166,7 @@ char *num_to_str(int num, char base)
         }
         str[i] = hex_to_char(num, base);
     }
-    reverse_string(str); //Reverses the string to provide a clean output.
+    str = reverse_string(str); //Reverses the string to provide a clean output.
     str = realloc(str, i + 1);
     return str;
 }
@@ -193,11 +195,22 @@ int insert(char c, va_list args) //This function determines how to add the next 
     else if (c == 's')
     {
         char* val = va_arg(args, char*);
-        int i = 0;
-        while (val[i] != '\0')
+        if (val == NULL)
         {
-            write(1, &val[i], 1);
-            i++;
+            val = "(null)";
+            while (val[i] != '\0')
+            {
+                write(1, &val[i], 1);
+                i++;
+            }
+        }
+        else
+        {
+            while (val[i] != '\0')
+            {
+                write(1, &val[i], 1);
+                i++;
+            }
         }
     }
     else if (c == 'p')
@@ -256,9 +269,10 @@ int my_printf(char *format, ...)
 
 int main()
 {
-    int x = 1000;
-    // char *x = "Hello";
-    printf("printf: %d\n", x);
-    my_printf("my_printf: %d\n", x);
+    char* p = NULL;
+    int x = my_printf("NULL STRING %s!\n", p);
+    int y = printf("NULL STRING %s!\n", p);
+    printf("x = %d\n", x);
+    printf("y = %d\n", y);
     return 0;
 }
