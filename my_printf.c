@@ -230,7 +230,7 @@ int insert(char c, va_list args) //This function determines how to add the next 
         val[i] = hex_to_char(num, 'x');
         val[i + 1] = 'x';
         val[i + 2] = '0';
-        reverse_string(val); //Reverses the string to provide a clean output.
+        val = reverse_string(val); //Reverses the string to provide a clean output.
         i = 0;  //reset i to 0 to write all the characters
         while (val[i] != '\0')
         {
@@ -269,10 +269,10 @@ int my_printf(char *format, ...)
 
 int main()
 {
-    char* p = NULL;
-    int x = my_printf("NULL STRING %s!\n", p);
-    int y = printf("NULL STRING %s!\n", p);
-    printf("x = %d\n", x);
-    printf("y = %d\n", y);
+    char* p = "alkhje;lkh";
+    int x = my_printf("NULL STRING %p!\n", p);
+    int y = printf("NULL STRING %p!\n", p);
+    printf("x = %d", x);
+    printf("y = %d", y);
     return 0;
 }
